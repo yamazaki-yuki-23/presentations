@@ -1,0 +1,4 @@
+interface:
+  display_name: "Slide Editor"
+  short_description: "既存スライドを簡潔化しメッセージを強化して整えるスキル"
+  default_prompt: "既存資料をブラッシュアップし、冗長を削減してメッセージを強化し、聴衆レベルに合わせて調整してください。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Slide Architect"
+  short_description: "発表資料の全体構造設計と優先度判断を支援するスキル"
+  default_prompt: "新規発表資料の骨子を設計し、重要度で内容を取捨選択してください。"

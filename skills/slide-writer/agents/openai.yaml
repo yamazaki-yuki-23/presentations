@@ -1,0 +1,4 @@
+interface:
+  display_name: "Slide Writer"
+  short_description: "1スライド1メッセージでMarp本文を生成するスキル"
+  default_prompt: "構成案に基づき、1スライド1メッセージ原則でMarp形式のスライド本文を生成してください。"
