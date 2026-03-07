@@ -1,11 +1,12 @@
 ---
 marp: true
-theme: gaia
+theme: blueprint
 paginate: true
 size: 16:9
 ---
 
 <!-- slide: 1 -->
+<!-- _class: lead -->
 # TypeScript 6.0
 
 ## 機能追加より「前提の更新」を読む
@@ -13,28 +14,31 @@ size: 16:9
 ---
 
 <!-- slide: 2 -->
+<!-- _class: calm -->
 # 今日のゴールは差分暗記ではない
 
 - 変更点を網羅する会ではない
 - 「何が標準前提になったか」を掴む
 - 明日からの `tsconfig` 判断を速くする
 
-**持ち帰り: 6.0 は移行判断の基準を更新するリリース**
+持ち帰り: 6.0 は移行判断の基準を更新するリリース
 
 ---
 
 <!-- slide: 3 -->
+<!-- _class: calm -->
 # TS6 は TS7 への橋渡しである
 
 - 6.0 は現行実装系での最終メジャー予定
 - 7.0 は Go 実装への移行が計画されている
 - 並列型チェックを見据えて挙動の決定性を整える
 
-**今は「動く設定」より「次でも崩れない設定」を選ぶ**
+今は「動く設定」より「次でも崩れない設定」を選ぶ
 
 ---
 
 <!-- slide: 4 -->
+<!-- _class: calm -->
 # 本質は「暗黙を減らし、明示を増やす」こと
 
 - 自動で拾う挙動を減らす
@@ -76,13 +80,14 @@ size: 16:9
 ---
 
 <!-- slide: 7 -->
+<!-- _class: calm -->
 # まず壊れやすいのは `types` と `rootDir`
 
 - `types` 未明示で `process` や `describe` が解決不能
 - `rootDir` 未明示で出力先が `dist/src/...` にズレる
 - ここは最初に固定すると移行事故が減る
 
-**移行初手は機能追加ではなく設定の固定**
+移行初手は機能追加ではなく設定の固定
 
 ---
 
@@ -93,7 +98,7 @@ size: 16:9
 - `module` は `esnext` が既定
 - ES5 前提の運用は標準コースから外れる
 
-**古い環境互換は別レイヤーで管理する**
+古い環境互換は別レイヤーで管理する
 
 ---
 
@@ -104,7 +109,7 @@ size: 16:9
 - `node` (`node10`) は非推奨
 - `nodenext` / `bundler` を選ぶ時代
 
-**Node 直実行か Bundler 中心かを先に決める**
+Node 直実行か Bundler 中心かを先に決める
 
 ---
 
@@ -136,7 +141,7 @@ import data from "./a.json" asserts { type: "json" }
 import data from "./a.json" with { type: "json" }
 ```
 
-**TS 独自より JavaScript 標準への整合を優先**
+TS 独自より JavaScript 標準への整合を優先
 
 ---
 
@@ -179,11 +184,12 @@ import data from "./a.json" with { type: "json" }
 - `Temporal`
 - `Map` / `WeakMap` upsert 系
 
-**先に土台設定、その後に機能活用**
+先に土台設定、その後に機能活用
 
 ---
 
 <!-- slide: 15 -->
+<!-- _class: calm -->
 # 移行優先順位はこの順で進める
 
 1. `types` / `rootDir` を明示して固定

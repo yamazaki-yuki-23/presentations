@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "preview": "marp -s",
-    "build:pdf": "marp -o dist/slides.pdf",
-    "build:html": "marp -o dist/slides.html",
-    "build:pptx": "marp -o dist/slides.pptx"
+    "preview": "marp --theme-set ./templates/theme.css -s",
+    "build:pdf": "marp --theme-set ./templates/theme.css -o dist/slides.pdf",
+    "build:html": "marp --theme-set ./templates/theme.css -o dist/slides.html",
+    "build:pptx": "marp --theme-set ./templates/theme.css -o dist/slides.pptx"
   },
   "devDependencies": {
     "@marp-team/marp-cli": "^4.2.3"

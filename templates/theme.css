@@ -1,28 +1,204 @@
----
-marp: true
-theme: gaia
-paginate: true
-size: 16:9
-style: |
-  section {
-    font-size: 28px;
-  }
----
+/* @theme blueprint */
 
-# タイトル
+@import "gaia";
 
----
+:root {
+  --bp-bg: #f3f7fb;
+  --bp-fg: #0f1f33;
+  --bp-muted: #48607c;
+  --bp-accent: #1765d1;
+  --bp-accent-soft: #8fb7ef;
+  --bp-code-bg: #0f1f33;
+  --bp-code-fg: #ecf3ff;
+}
 
-# 今日のゴール
+section {
+  font-family: "IBM Plex Sans", "Noto Sans JP", "Hiragino Sans", sans-serif;
+  color: var(--bp-fg);
+  background-color: var(--bp-bg);
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(23, 101, 209, 0.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(23, 101, 209, 0.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      135deg,
+      rgba(143, 183, 239, 0.14),
+      rgba(243, 247, 251, 0) 52%
+    );
+  background-size: 40px 40px, 40px 40px, 100% 100%;
+  font-size: 30px;
+  line-height: 1.45;
+  padding: 68px 78px;
+}
 
-- 
-- 
-- 
+section::before {
+  content: "";
+  position: absolute;
+  top: 26px;
+  left: 34px;
+  right: 34px;
+  height: 6px;
+  background: linear-gradient(90deg, var(--bp-accent), var(--bp-accent-soft));
+}
 
----
+h1,
+h2,
+h3 {
+  font-family: "IBM Plex Mono", "JetBrains Mono", monospace;
+  color: var(--bp-fg);
+  letter-spacing: 0.01em;
+  margin-bottom: 0.4em;
+}
 
-# 本題
+h1 {
+  font-size: 1.5em;
+  border-left: 8px solid var(--bp-accent);
+  padding-left: 0.35em;
+}
 
----
+h2 {
+  color: var(--bp-muted);
+  font-size: 1.02em;
+}
 
-# まとめ
+p,
+li {
+  color: var(--bp-fg);
+}
+
+strong {
+  color: var(--bp-accent);
+  font-weight: 800;
+}
+
+ul,
+ol {
+  margin-top: 0.45em;
+}
+
+li + li {
+  margin-top: 0.28em;
+}
+
+code {
+  font-family: "JetBrains Mono", "IBM Plex Mono", monospace;
+  font-size: 0.88em;
+  color: #0b3f86;
+  background: #e7f0ff;
+  border: 1px solid rgba(23, 101, 209, 0.28);
+  border-radius: 6px;
+  padding: 0.12em 0.32em;
+  font-weight: 700;
+}
+
+pre {
+  border-radius: 14px;
+  border: 2px solid rgba(23, 101, 209, 0.25);
+  background: var(--bp-code-bg);
+  padding: 0.8em;
+  min-height: 5.2em;
+  box-shadow: 0 10px 24px rgba(15, 31, 51, 0.14);
+}
+
+pre code {
+  background: transparent;
+  color: var(--bp-code-fg);
+  border: 0;
+  font-weight: 500;
+  font-size: 0.95em;
+  line-height: 1.45;
+  padding: 0;
+}
+
+blockquote {
+  border-left: 6px solid var(--bp-accent);
+  background: rgba(23, 101, 209, 0.08);
+  color: var(--bp-fg);
+  padding: 0.45em 0.7em;
+  border-radius: 0 10px 10px 0;
+}
+
+section::after {
+  font-family: "IBM Plex Mono", "JetBrains Mono", monospace;
+  font-size: 0.52em;
+  color: var(--bp-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  bottom: 22px;
+  right: 24px;
+  opacity: 0.88;
+}
+
+section.lead {
+  justify-content: center;
+  text-align: center;
+  background-image:
+    radial-gradient(
+      circle at 50% 18%,
+      rgba(23, 101, 209, 0.2),
+      rgba(243, 247, 251, 0) 42%
+    ),
+    linear-gradient(
+      to right,
+      rgba(23, 101, 209, 0.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(23, 101, 209, 0.08) 1px,
+      transparent 1px
+    );
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+}
+
+section.lead::before {
+  left: 22%;
+  right: 22%;
+  height: 8px;
+}
+
+section.lead h1 {
+  border-left: 0;
+  padding-left: 0;
+  font-size: 2.2em;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.2em;
+}
+
+section.lead h2 {
+  font-size: 1.1em;
+  color: #244d82;
+  font-weight: 700;
+}
+
+section.lead::after {
+  display: none;
+}
+
+section.calm {
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(23, 101, 209, 0.045) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(23, 101, 209, 0.045) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      135deg,
+      rgba(143, 183, 239, 0.09),
+      rgba(243, 247, 251, 0) 56%
+    );
+}

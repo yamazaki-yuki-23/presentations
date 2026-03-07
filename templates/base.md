@@ -1,6 +1,6 @@
 ---
 marp: true
-theme: gaia
+theme: blueprint
 paginate: true
 size: 16:9
 style: |
