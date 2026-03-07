@@ -227,29 +227,3 @@ section.calm {
       rgba(243, 247, 251, 0) 56%
     );
 }
-
-@media print {
-  section {
-    font-size: 28px;
-    line-height: 1.4;
-    padding: 60px 70px;
-  }
-
-  h1 {
-    font-size: 1.4em;
-  }
-
-  pre {
-    padding: 0.65em;
-    min-height: 4.6em;
-  }
-
-  pre code {
-    font-size: 0.9em;
-  }
-
-  p.note {
-    bottom: 52px;
-    font-size: 0.62em;
-  }
-}
