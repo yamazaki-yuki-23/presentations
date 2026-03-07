@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "preview": "marp --theme-set ./templates/theme.css -s",
-    "build:pdf": "marp --theme-set ./templates/theme.css -o dist/slides.pdf",
-    "build:html": "marp --theme-set ./templates/theme.css -o dist/slides.html",
+    "build:pdf": "bun ./scripts/export-slides.ts pdf",
+    "build:pdf:all": "bun ./scripts/export-slides.ts pdf --all",
+    "build:html": "bun ./scripts/export-slides.ts html",
+    "build:html:all": "bun ./scripts/export-slides.ts html --all",
     "build:pptx": "marp --theme-set ./templates/theme.css -o dist/slides.pptx"
   },
   "devDependencies": {

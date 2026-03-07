@@ -1,0 +1,119 @@
+name: Render Slides
+
+on:
+  workflow_dispatch:
+    inputs:
+      slide_path:
+        description: Path to slides.md
+        required: true
+        type: string
+      output:
+        description: Output target
+        required: true
+        type: choice
+        options:
+          - pdf
+          - pages
+          - both
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  render-pdf:
+    if: ${{ inputs.output == 'pdf' || inputs.output == 'both' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Render PDF
+        run: bun run build:pdf "${{ inputs.slide_path }}"
+
+      - name: Compute artifact paths
+        id: pdf-meta
+        run: |
+          slide_path="${{ inputs.slide_path }}"
+          slide_dir="$(dirname "$slide_path")"
+          artifact_name="$(echo "$slide_dir" | tr '/' '-')-pdf"
+          pdf_path="dist/${slide_dir}/slides.pdf"
+          echo "artifact_name=${artifact_name}" >> "$GITHUB_OUTPUT"
+          echo "pdf_path=${pdf_path}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.pdf-meta.outputs.artifact_name }}
+          path: ${{ steps.pdf-meta.outputs.pdf_path }}
+
+  render-pages:
+    if: ${{ inputs.output == 'pages' || inputs.output == 'both' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Render HTML
+        run: bun run build:html "${{ inputs.slide_path }}"
+
+      - name: Prepare Pages content
+        run: |
+          set -eux
+          slide_path="${{ inputs.slide_path }}"
+          slide_dir="$(dirname "$slide_path")"
+          publish_dir=".pages"
+
+          mkdir -p "${publish_dir}/${slide_dir}"
+          cp "dist/${slide_dir}/slides.html" "${publish_dir}/${slide_dir}/slides.html"
+
+          if [ -d "${slide_dir}/assets" ]; then
+            mkdir -p "${publish_dir}/${slide_dir}"
+            cp -R "${slide_dir}/assets" "${publish_dir}/${slide_dir}/assets"
+          fi
+
+          if [ -d "assets" ]; then
+            cp -R "assets" "${publish_dir}/assets"
+          fi
+
+          cat <<EOF > "${publish_dir}/index.html"
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <meta http-equiv="refresh" content="0; url=./${slide_dir}/slides.html" />
+              <title>Slides</title>
+            </head>
+            <body>
+              <p><a href="./${slide_dir}/slides.html">Open slides</a></p>
+            </body>
+          </html>
+          EOF
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .pages
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

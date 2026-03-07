@@ -76,22 +76,57 @@ bun run preview
 ### HTMLを生成
 
 ```bash
-bun run build:html
+bun run build:html 2026/ts-6.0/slides.md
 ```
 
 ### PDFを生成
 
 ```bash
-bun run build:pdf
+bun run build:pdf 2026/ts-6.0/slides.md
 ```
 
-### HTMLとPDFをまとめて生成
+指定した `slides.md` は、`dist/` 配下に元のディレクトリ構造を保って出力されます。
+
+```text
+2026/ts-6.0/slides.md
+-> dist/2026/ts-6.0/slides.pdf
+```
+
+### すべてのスライドをPDF生成
 
 ```bash
-bun run build
+bun run build:pdf:all
+```
+
+### すべてのスライドをHTML生成
+
+```bash
+bun run build:html:all
 ```
 
 生成物は `dist/` 配下に出力されます。
+
+---
+
+## GitHub Actions で手動生成
+
+GitHub の `Actions` から `Render Slides` workflow を手動実行できます。
+
+- `slide_path`: 例 `2026/ts-6.0/slides.md`
+- `output`: `pdf` / `pages` / `both`
+
+### `pdf`
+
+指定した資料を PDF に変換し、artifact として保存します。
+
+### `pages`
+
+指定した資料だけを HTML として GitHub Pages に公開します。  
+毎回 1 資料ずつ上書き公開する運用です。
+
+### `both`
+
+PDF artifact と GitHub Pages 公開の両方を行います。
 
 ---
 
