@@ -21,7 +21,7 @@ size: 16:9
 - 個別機能より、`tsconfig` 変更の設計意図を見る
 - TS6 が何を捨て、何を標準にしたかを掴む
 
-結論: 6.0 は機能追加より設計方針の転換を読むリリース
+<p class="conclusion">6.0 は機能追加より設計方針の転換を読むリリース</p>
 
 ---
 
@@ -30,22 +30,24 @@ size: 16:9
 # TS6 は TS7 への橋渡しである
 
 - 6.0 は現行実装系での最終メジャー予定
-- 7.0 は Go 実装への移行が計画されている
+- 7.0 は Go 実装への移行が計画されている <span class="note-ref">[1]</span>
 - 並列型チェックを見据えて挙動の決定性を整える
 
-今は「動く設定」より「次でも崩れない設定」を選ぶ
+<p class="conclusion">今は「動く設定」より「TS7時代でも崩れない設定」を選ぶ</p>
+
+<p class="note">[1] このGo化の対象は主にコンパイラ/言語サービスの実装であり、言語仕様そのものが変わる話ではない</p>
 
 ---
 
 <!-- slide: 4 -->
 <!-- _class: calm -->
-# 本質は「暗黙を減らし、明示を増やす」こと
+# TS6 の設計の軸は「暗黙を減らし、明示を増やす」
 
-- 自動で拾う挙動を減らす
-- レガシー互換の枝分かれを減らす
-- ESM 前提の解決規則に寄せる
+- `strict` / `types` などの暗黙既定を減らし、必要な設定を明示する
+- `classic` 削除や `node10` 非推奨のように、旧互換ルートを減らす
+- 解決規則を ESM 前提へ寄せ、環境差分を小さくする
 
-**設計思想は一貫している: 予測可能性の強化**
+<p class="conclusion">TS6は、暗黙依存を減らして「設定で挙動を揃える」方向に寄せている</p>
 
 ---
 
@@ -87,7 +89,7 @@ size: 16:9
 - `rootDir` 未明示で出力先が `dist/src/...` にズレる
 - ここは最初に固定すると移行事故が減る
 
-移行初手は機能追加ではなく設定の固定
+<p class="conclusion">移行初手は機能追加ではなく設定の固定</p>
 
 ---
 
@@ -98,7 +100,7 @@ size: 16:9
 - `module` は `esnext` が既定
 - ES5 前提の運用は標準コースから外れる
 
-古い環境互換は別レイヤーで管理する
+<p class="conclusion">古い環境互換は別レイヤーで管理する</p>
 
 ---
 
@@ -109,12 +111,12 @@ size: 16:9
 - `node` (`node10`) は非推奨
 - `nodenext` / `bundler` を選ぶ時代
 
-Node 直実行か Bundler 中心かを先に決める
+<p class="conclusion">Node 直実行か Bundler 中心かを先に決める</p>
 
 ---
 
 <!-- slide: 10 -->
-# `baseUrl` 単体運用は非推奨になった
+# `--baseUrl` は deprecated になった
 
 ```json
 {
@@ -122,9 +124,9 @@ Node 直実行か Bundler 中心かを先に決める
 }
 ```
 
-- 単体では解決規則が曖昧になりやすい
-- ツールごとの差異を招きやすい
-- 必要なら `paths` まで明示して管理する
+- `baseUrl` を import 解決の基準ディレクトリとして使う挙動が廃止される
+- `paths` で使う共通接頭辞は各エントリに明示する
+- 旧挙動が必要な場合は `paths` に `*` マッピングを追加する
 
 ---
 
@@ -141,7 +143,7 @@ import data from "./a.json" asserts { type: "json" }
 import data from "./a.json" with { type: "json" }
 ```
 
-TS 独自より JavaScript 標準への整合を優先
+<p class="conclusion">TS 独自より JavaScript 標準への整合を優先</p>
 
 ---
 
@@ -184,7 +186,7 @@ TS 独自より JavaScript 標準への整合を優先
 - `Temporal`
 - `Map` / `WeakMap` upsert 系
 
-先に土台設定、その後に機能活用
+<p class="conclusion">先に土台設定、その後に機能活用</p>
 
 ---
 
@@ -194,10 +196,10 @@ TS 独自より JavaScript 標準への整合を優先
 
 1. `types` / `rootDir` を明示して固定
 2. `moduleResolution` と `module` を現実に合わせる
-3. 非推奨 (`baseUrl` 単体, `node`, `es5`) を整理
+3. 非推奨 (`baseUrl`, `node`, `es5`) を整理
 4. `import ... with` へ構文移行
 
-**CI で `tsc --noEmit` を回し、差分を可視化する**
+<p class="conclusion">CI で `tsc --noEmit` を回し、差分を可視化する</p>
 
 ---
 
@@ -208,7 +210,7 @@ TS 独自より JavaScript 標準への整合を優先
 - ESM とモダンランタイムを標準前提にする
 - TS7 移行で困らない設計へ寄せる
 
-**判断軸は「今通るか」より「次でも維持できるか」**
+<p class="conclusion">判断軸は「今通るか」より「次でも維持できるか」</p>
 
 ---
 
