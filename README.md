@@ -69,6 +69,18 @@ bun run preview
 
 ローカルのプレビューサーバーが起動し、`2026/ts-6.0/slides.md` を監視します。
 
+## Mintlify ドキュメントのプレビュー
+
+Mintlify 用の設定は `docs.json` と `docs/` 配下にあります。
+
+公式ドキュメントでは、`docs.json` のあるディレクトリで `mint dev`、または一時実行として `npx mint dev` が案内されています。
+
+```bash
+bun run docs:dev
+```
+
+初回実行時に `npx` 経由で Mintlify CLI を取得します。
+
 ---
 
 ## スライドの生成

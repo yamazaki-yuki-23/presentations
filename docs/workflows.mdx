@@ -1,0 +1,45 @@
+---
+title: "Workflows"
+description: "ローカルプレビュー、出力、公開までの基本運用"
+---
+
+# 作業フロー
+
+## セットアップ
+
+```bash
+bun install
+```
+
+VS Code を使う場合は `Marp for VS Code` を入れておくと編集しやすくなります。
+
+## スライドのプレビュー
+
+```bash
+bun run preview
+```
+
+既定では `2026/ts-6.0/slides.md` を監視します。
+
+## HTML / PDF の生成
+
+```bash
+bun run build:html 2026/ts-6.0/slides.md
+bun run build:pdf 2026/ts-6.0/slides.md
+```
+
+生成物は `dist/` 配下に出力されます。
+
+## GitHub Actions での手動生成
+
+`Render Slides` workflow から対象ファイルを指定して PDF または Pages 公開を実行できます。
+
+## Mintlify のローカルプレビュー
+
+公式ドキュメントでは、`docs.json` があるディレクトリで `mint dev`、または一時実行として `npx mint dev` が案内されています。
+
+```bash
+npx mint dev
+```
+
+デフォルトでは `http://localhost:3000` で確認できます。

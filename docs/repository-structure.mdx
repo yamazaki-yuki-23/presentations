@@ -1,0 +1,43 @@
+---
+title: "Repository Structure"
+description: "発表資料リポジトリのディレクトリ構成と役割"
+---
+
+# リポジトリ構成
+
+```text
+.
+├─ 2026/
+│  └─ ts-6.0/
+│     ├─ README.md
+│     └─ slides.md
+├─ assets/
+├─ docs/
+│  ├─ index.mdx
+│  ├─ repository-structure.mdx
+│  ├─ workflows.mdx
+│  └─ presentations/
+│     └─ typescript-6-0.mdx
+├─ scripts/
+│  └─ export-slides.ts
+├─ templates/
+│  ├─ base.md
+│  └─ theme.css
+├─ docs.json
+├─ package.json
+└─ README.md
+```
+
+## 各ディレクトリの役割
+
+- `2026/`: 年度ごとの発表資料
+- `templates/`: 共通テーマやテンプレート
+- `scripts/`: HTML / PDF 出力の補助スクリプト
+- `docs/`: Mintlify 用のリポジトリドキュメント
+
+## 新しい発表資料を追加する手順
+
+1. 対象年度の配下に新しいディレクトリを作る
+2. `templates/base.md` をベースに `slides.md` を作る
+3. 画像があれば各発表ディレクトリ配下に置く
+4. ローカルプレビューと出力を確認する

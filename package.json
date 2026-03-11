@@ -9,7 +9,8 @@
     "build:pdf:all": "bun ./scripts/export-slides.ts pdf --all",
     "build:html": "bun ./scripts/export-slides.ts html",
     "build:html:all": "bun ./scripts/export-slides.ts html --all",
-    "build:pptx": "marp --theme-set ./templates/theme.css -o dist/slides.pptx"
+    "build:pptx": "marp --theme-set ./templates/theme.css -o dist/slides.pptx",
+    "docs:dev": "npx mint dev"
   },
   "devDependencies": {
     "@marp-team/marp-cli": "^4.2.3"
