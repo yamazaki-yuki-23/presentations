@@ -93,10 +93,10 @@ size: 16:9
 - 必要な型を明示すると、環境差分を切り分けやすくなる
 
 ```text
-暗黙のまま           先に固定する
-types: 自動流入      types: ["node", "vitest"]
-      ↓                    ↓
-環境差分が出る       使う型を説明できる
+暗黙のまま             先に固定する
+types: 自動読み込み    types: ["node", "vitest"]
+      ↓                      ↓
+環境差分が出る         使う型を説明できる
 ```
 
 <p class="conclusion"><code>types</code> は「必要な型を使う設定」として最初に固定する</p>
@@ -125,7 +125,7 @@ TS6: rootDir = tsconfig の場所 → dist/src/index.js
 <!-- slide: 9 -->
 # `target` と `module` の既定は現在主流の実行環境に寄った
 
-- 現在主流の実行環境（evergreen）に合わせてデフォルトが見直された
+- 現在主流の実行環境に合わせてデフォルトが見直された
 - `target` のデフォルトは `es2025` になる
 - `module` のデフォルトは `esnext` になる
 - ES5 向け互換が必要な場合は、別途ビルド工程で対応する
@@ -175,7 +175,7 @@ import data from "./a.json" asserts { type: "json" }
 import data from "./a.json" with { type: "json" }
 ```
 
-- 設定変更ではないが、移行時に押さえるべき標準構文側の変更
+- `tsconfig` の話ではないが、移行時に押さえるべき標準構文側の変更
 - JSON import などでは、構文の書き換えが必要になる
 <p class="conclusion">JavaScript標準化の流れに合わせて、import の構文は asserts から with へ移行した</p>
 
@@ -305,7 +305,7 @@ export function foo(condition: boolean) {
 2. `moduleResolution` と `module` を実行環境に合わせる
 3. 見つかった import 解決エラーと非推奨設定を潰す
    - `baseUrl` は `paths` 明示へ移行する
-   - `noUncheckedSideEffectImports` で見つかった import 解決を直す
+   - `noUncheckedSideEffectImports` で見つかった副作用 import の解決ミスを直す
    - `moduleResolution: node` は `nodenext` / `bundler` へ移行する
    - `target: es5` は互換ビルド工程へ分離する
 4. `import ... with` へ構文移行
