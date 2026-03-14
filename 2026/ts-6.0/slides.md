@@ -63,10 +63,12 @@ size: 16:9
 - 「後で厳しくする」戦略は負債化しやすい
 - 緩い運用にするなら、`strict: false` を明示して使う
 
+<p class="conclusion">TS6 では、厳格化は追加施策ではなく標準前提になった</p>
+
 ---
 
 <!-- slide: 6 -->
-# `types` のデフォルト変更で型の読込方針が変わる
+# `types` は自動読込から明示指定へ変わった
 
 ```json
 {
@@ -80,14 +82,16 @@ size: 16:9
   - Node / Jest / Vitest など必要な型だけを明示指定する
   - 不要な型読込を減らし、型解決のブレを抑える
 
+<p class="conclusion">型の流入元を明示し、環境ごとの揺れを減らす方向に変わった</p>
+
 ---
 
 <!-- slide: 7 -->
 <!-- _class: calm -->
-# 初手で固定したい設定は `types` と `rootDir`
+# `rootDir` の既定が変わったので早めに固定する
 
-- `types` を指定しないと `process` や `describe` が解決できないケースが出る
-- `rootDir` を指定しないと出力先が `dist/src/...` にズレる場合がある <span class="note-ref">[1]</span>
+- `types` 未指定では `process` や `describe` が解決できないケースが出る
+- `rootDir` の既定が `.` になり、出力先が `dist/src/...` などにズレる場合がある <span class="note-ref">[1]</span>
 - 移行時は後回しにせず、先に明示して設定の揺れを止める
 - ここを先に固定すると移行時の事故を減らせる
 
@@ -98,7 +102,7 @@ size: 16:9
 ---
 
 <!-- slide: 8 -->
-# `target` と `module` のデフォルトが見直された
+# `target` と `module` の既定は modern 前提になった
 
 - 現在主流の実行環境（evergreen）に合わせてデフォルトが見直された
 - `target` のデフォルトは `es2025` になる
@@ -112,7 +116,7 @@ size: 16:9
 ---
 
 <!-- slide: 9 -->
-# `moduleResolution` は実行環境に合わせて選ぶ
+# `moduleResolution` は Node か Bundler かで先に決める
 
 - `classic` は削除
 - `node` (`node10`) は非推奨
@@ -123,7 +127,7 @@ size: 16:9
 ---
 
 <!-- slide: 10 -->
-# `baseUrl` は deprecated になった
+# `baseUrl` 依存は `paths` 明示へ置き換える
 
 ```json
 {
@@ -136,10 +140,12 @@ size: 16:9
 - `paths` で使う共通接頭辞は各エントリに明示する
 - 旧挙動が必要な場合は `paths` に `*` マッピングを追加する
 
+<p class="conclusion">import 解決の起点は暗黙に置かず、`paths` で明示する</p>
+
 ---
 
 <!-- slide: 11 -->
-# `import assertions` は `with` へ置き換わる
+# `import assertions` は `with` へ移行する
 
 ```ts
 // before
@@ -155,7 +161,7 @@ import data from "./a.json" with { type: "json" }
 ---
 
 <!-- slide: 12 -->
-# `dom.iterable` / `dom.asynciterable` は `dom` に統合された
+# `dom.iterable` / `dom.asynciterable` は足さなくてよくなった
 
 ```json
 {
@@ -170,10 +176,29 @@ import data from "./a.json" with { type: "json" }
 - `lib` 指定も、冗長な組み合わせを前提にしない方向で整理された
 - 指定自体は可能だが、実体は空ファイル
 
+<p class="conclusion">`lib` 設定も「足す前提」から「最小指定」へ寄っている</p>
+
 ---
 
 <!-- slide: 13 -->
-# `stableTypeOrdering` は TS6/TS7 比較用オプション
+# 副作用 import の見落としは既定でエラーになる
+
+```json
+{
+  "noUncheckedSideEffectImports": true
+}
+```
+
+- `import "./setup";` のような副作用 import で、解決できない参照を見逃しにくくなる
+- 以前は通っていた typo や解決できない副作用 import が、移行時に表面化しやすい
+- CSS などのアセット import やパスエイリアスは、解決設定や宣言ファイルも合わせて見直す
+
+<p class="conclusion">TS6 は「見逃されていた副作用 import の解決ミス」を表面化させる</p>
+
+---
+
+<!-- slide: 14 -->
+# `stableTypeOrdering` は比較時だけ一時的に使う
 
 ```json
 {
@@ -190,8 +215,8 @@ import data from "./a.json" with { type: "json" }
 
 ---
 
-<!-- slide: 14 -->
-# TS6 / TS6+flag / TS7 の結果比較
+<!-- slide: 15 -->
+# 問題は「同じ意味でも表示順が揺れる」こと
 
 ```ts
 // base.ts
@@ -206,12 +231,15 @@ export function foo(condition: boolean) {
 }
 ```
 
-- この入力で `.d.ts` の union 順序がどう出るかを比較する
+- 余計な定義が 1 つ増えるだけで `.d.ts` の union 順序が変わることがある
+
+<p class="conclusion">差分比較では「意味の差」ではなく「順序の差」がノイズになる</p>
 
 ---
 
-<!-- slide: 15 -->
-## 同じ入力での出力比較
+<!-- slide: 16 -->
+# `stableTypeOrdering` を使うと比較ノイズを減らせる
+
 | モード | `foo` 戻り値型（`.d.ts`） | 備考 |
 |---|---|---|
 | TS6 (flagなし) | `100 \| 500` / `500 \| 100` | 生成順で揺れる |
@@ -220,19 +248,7 @@ export function foo(condition: boolean) {
 
 ---
 
-<!-- slide: 16 -->
-# TS7 で順序が安定化される理由
-
-- TS6 までは型生成順（内部ID順）が表示順に影響しやすい
-- TS7 では型構造ベースの決定的な並び順へ移行する
-- Go 実装・並列型チェックでも順序を安定させる狙いがある
-
-<p class="conclusion">安定順序は「同じ入力なら同じ出力」に寄せるための変更</p>
-
----
-
-<!-- slide: 17 -->
-# `stableTypeOrdering` の使いどころ
+# `stableTypeOrdering` は常用ではなく移行用
 
 - 常時ONではなく、移行検証で一時的に有効化する
 - 型チェックが最大 25% 程度遅くなる可能性がある
@@ -260,26 +276,29 @@ export function foo(condition: boolean) {
 
 <!-- slide: 19 -->
 <!-- _class: calm -->
-# 移行時はこの順で見ると整理しやすい
+# 移行時はこの順で見ると崩れにくい
 
 1. `types` / `rootDir` を明示して固定
 2. `moduleResolution` と `module` を実行環境に合わせる
-3. 非推奨の設定を置換先へ移行する
+3. `noUncheckedSideEffectImports` で表面化した import 解決を直す
+4. 非推奨の設定を置換先へ移行する
    - `baseUrl` は `paths` 明示へ移行する
    - `moduleResolution: node` は `nodenext` / `bundler` へ移行する
    - `target: es5` は互換ビルド工程へ分離する
-4. `import ... with` へ構文移行
+5. `import ... with` へ構文移行
 
 <p class="conclusion"><code>tsc --noEmit</code> で破壊的変更を確認し、必要に応じて <code>.d.ts</code> / エラーメッセージ差分も見る</p>
 
 ---
 
 <!-- slide: 20 -->
-# まとめ: TS6 は設定と移行の考え方を変えるリリース
+# まずやることは 3 つでよい
 
-- 暗黙依存を減らし、明示設定を増やす
-- ESM と現在主流の実行環境を標準前提にする
-- TS7 への移行を見据えた設定へ寄せる
+- `types` / `rootDir` を固定して設定の揺れを止める
+- `moduleResolution` / `module` を実行環境に合わせる
+- 非推奨設定と副作用 import を先に潰す
+
+<p class="conclusion">TS6 は「新機能を足す」より「設定を明示し直す」リリースである</p>
 
 ---
 
