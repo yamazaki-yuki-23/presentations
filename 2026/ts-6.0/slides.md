@@ -326,5 +326,13 @@ export function foo(condition: boolean) {
 ---
 
 <!-- slide: 22 -->
+# 参考資料
+
+- [TypeScript 6.0 Beta Announcement](https://devblogs.microsoft.com/typescript/announcing-typescript-6-0-beta/)
+- [TypeScript 6.0 RC Announcement](https://devblogs.microsoft.com/typescript/announcing-typescript-6-0-rc/)
+
+---
+
+<!-- slide: 23 -->
 <!-- _class: lead -->
 # Thank You
