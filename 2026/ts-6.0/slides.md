@@ -7,7 +7,8 @@ size: 16:9
 
 <!-- slide: 1 -->
 <!-- _class: lead -->
-# TypeScript 6.0 で設定と移行はどう変わるか
+# TypeScript 6.0 で
+# 設定と移行はどう変わるか
 
 ---
 
