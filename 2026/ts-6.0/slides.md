@@ -7,17 +7,17 @@ size: 16:9
 
 <!-- slide: 1 -->
 <!-- _class: lead -->
-# TypeScript 6.0 設定と移行の考え方はどう変わったか
+# TypeScript 6.0 で設定と移行はどう変わるか
 
 ---
 
 <!-- slide: 2 -->
 <!-- _class: calm -->
-# 今日のゴール: 設定と移行の考え方の変化を掴む
+# 今日のゴール: TS6 で見直す設定と移行の勘所を掴む
 
-- 変更点の網羅は目的にしない
+- 変更点を全部追うことは目的にしない
 - 個別機能より、設定の前提がどう変わったかを見る
-- TS6 が何を標準にし、何を明示する方向へ寄せたかを掴む
+- TS6 で何が標準になり、何を明示する必要が出たかを見る
 
 <p class="conclusion">TS6 では、何が増えたか以上に「どう設定し、どう移行するか」が重要になる</p>
 
@@ -25,7 +25,7 @@ size: 16:9
 
 <!-- slide: 3 -->
 <!-- _class: calm -->
-# TS6 は TS7 への橋渡しである
+# TS7 を見据えた移行準備が始まった
 
 - 6.0 は現行実装系での最終メジャー予定
 - 7.0 は Go 実装への移行が計画されている <span class="note-ref">[1]</span>
@@ -88,21 +88,28 @@ size: 16:9
 
 <!-- slide: 7 -->
 <!-- _class: calm -->
-# `rootDir` の既定が変わったので早めに固定する
+# 最初に固定するのは `types` と `rootDir`
 
 - `types` 未指定では `process` や `describe` が解決できないケースが出る
 - `rootDir` の既定が `.` になり、出力先が `dist/src/...` などにズレる場合がある <span class="note-ref">[1]</span>
 - 移行時は後回しにせず、先に明示して設定の揺れを止める
-- ここを先に固定すると移行時の事故を減らせる
 
-<p class="conclusion">移行初手は機能追加ではなく設定の固定</p>
+```text
+暗黙のまま                 先に固定する
+types: 自動流入            types: ["node", "vitest"]
+rootDir: 推論              rootDir: "./src"
+        ↓                          ↓
+環境差分や出力ズレ         挙動と出力先を固定
+```
+
+<p class="conclusion">移行初手は機能追加ではなく、揺れやすい設定の固定である</p>
 
 <p class="note">[1] `dist/src/...` は典型例。出力先はプロジェクト構成や他の設定によって変わる</p>
 
 ---
 
 <!-- slide: 8 -->
-# `target` と `module` の既定は modern 前提になった
+# `target` と `module` の既定は現在主流の実行環境に寄った
 
 - 現在主流の実行環境（evergreen）に合わせてデフォルトが見直された
 - `target` のデフォルトは `es2025` になる
@@ -127,7 +134,7 @@ size: 16:9
 ---
 
 <!-- slide: 10 -->
-# `baseUrl` 依存は `paths` 明示へ置き換える
+# `baseUrl` は非推奨になり、import 解決は `paths` 明示へ寄せる
 
 ```json
 {
@@ -135,9 +142,8 @@ size: 16:9
 }
 ```
 
-- `baseUrl` を import 解決の基準ディレクトリとして使う挙動が廃止される
-- 暗黙の探索起点を減らし、解決規則を `paths` で明示する方向に整理された
-- `paths` で使う共通接頭辞は各エントリに明示する
+- `baseUrl` は非推奨になった
+- import 解決は `paths` で明示する方向に整理された
 - 旧挙動が必要な場合は `paths` に `*` マッピングを追加する
 
 <p class="conclusion">import 解決の起点は暗黙に置かず、`paths` で明示する</p>
@@ -156,6 +162,7 @@ import data from "./a.json" with { type: "json" }
 ```
 
 - 設定変更ではないが、移行時に押さえるべき標準構文側の変更
+- JSON import などでは、構文の書き換えが必要になる
 <p class="conclusion">JavaScript標準化の流れに合わせて、import の構文は asserts から with へ移行した</p>
 
 ---
@@ -181,7 +188,7 @@ import data from "./a.json" with { type: "json" }
 ---
 
 <!-- slide: 13 -->
-# 副作用 import の見落としは既定でエラーになる
+# 副作用 import の解決ミスは既定で表面化する
 
 ```json
 {
@@ -246,6 +253,15 @@ export function foo(condition: boolean) {
 | TS6 (+flag) | TS7 と同じ順序 | 比較ノイズ減 |
 | TS7 | 安定順序 | 同じ入力で同じ順序 |
 
+```text
+同じ入力
+  ├─ TS6           → 順序が揺れる
+  ├─ TS6 + flag    → TS7 と同じ順序
+  └─ TS7           → 安定順序
+```
+
+<p class="conclusion">TS6/TS7 比較では、まず順序ノイズを消してから差分を見る</p>
+
 ---
 
 # `stableTypeOrdering` は常用ではなく移行用
@@ -260,17 +276,15 @@ export function foo(condition: boolean) {
 ---
 
 <!-- slide: 18 -->
-# 細かな改善は移行項目と分けて見る
+# 細かな改善は移行項目と分けて確認する
 
-- this なし関数の型推論改善
-- `lib` に `es2025` を指定すると、ES2025 API の型が使える
-  - `RegExp.escape`（文字列を正規表現用に安全にエスケープ）
-- `lib` に `esnext` を指定すると、次期標準APIの型が使える
-  - `Temporal`（次世代日時APIの型定義）
-  - `Map` / `WeakMap` upsert 系（存在時は更新、未存在時は追加）
-- いずれも有用だが、まず押さえたい移行項目とは分けて見る
+- まず対応すべきなのは設定変更と非推奨項目
+- 個別機能の改善は、移行後にまとめて確認すればよい
+- this なし関数の型推論改善がある
+- `es2025` では `RegExp.escape` などの型が使える
+- `esnext` では `Temporal` など次期標準 API の型が使える
 
-<p class="conclusion">まずは移行に関わる設定変更を押さえ、その後に個別改善を見る</p>
+<p class="conclusion">移行を止める変更と、後で取り込める改善は分けて扱う</p>
 
 ---
 
@@ -280,25 +294,25 @@ export function foo(condition: boolean) {
 
 1. `types` / `rootDir` を明示して固定
 2. `moduleResolution` と `module` を実行環境に合わせる
-3. `noUncheckedSideEffectImports` で表面化した import 解決を直す
-4. 非推奨の設定を置換先へ移行する
+3. 表面化した import 解決エラーと非推奨設定を潰す
    - `baseUrl` は `paths` 明示へ移行する
+   - `noUncheckedSideEffectImports` で表面化した import 解決を直す
    - `moduleResolution: node` は `nodenext` / `bundler` へ移行する
    - `target: es5` は互換ビルド工程へ分離する
-5. `import ... with` へ構文移行
+4. `import ... with` へ構文移行
 
 <p class="conclusion"><code>tsc --noEmit</code> で破壊的変更を確認し、必要に応じて <code>.d.ts</code> / エラーメッセージ差分も見る</p>
 
 ---
 
 <!-- slide: 20 -->
-# まずやることは 3 つでよい
+# TS6 は前提を現代向けに揃え直す
 
-- `types` / `rootDir` を固定して設定の揺れを止める
-- `moduleResolution` / `module` を実行環境に合わせる
-- 非推奨設定と副作用 import を先に潰す
+- 暗黙依存を減らし、必要な設定を明示する
+- ESM と現在主流の実行環境を標準前提にする
+- TS7 への移行を見据えた設定へ寄せる
 
-<p class="conclusion">TS6 は「新機能を足す」より「設定を明示し直す」リリースである</p>
+<p class="conclusion">TS6 は「新機能を足す」より「前提を現代向けに揃え直す」リリースである</p>
 
 ---
 
