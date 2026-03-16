@@ -113,7 +113,7 @@ TypeScript 6.0 RC がリリースされた
 暗黙のまま             先に固定する
 types: 自動読み込み    types: ["node", "vitest"]
       ↓                      ↓
-環境差分が出る         使う型を説明できる
+環境差分が出る         使う型が明確になる
 ```
 
 <p class="conclusion"><code>types</code> は「必要な型を使う設定」として最初に固定する</p>
