@@ -13,18 +13,23 @@ size: 16:9
 ---
 
 <!-- slide: 2 -->
-<!-- _class: calm -->
-# 今日のゴール: TS6 で見直す設定と移行の勘所を掴む
+<!-- _class: lead -->
+# TypeScript 6.0 RC is out
 
-- 変更点を全部追うことは目的にしない
-- 個別機能より、設定の前提がどう変わったかを見る
-- TS6 で何が標準になり、何を明示する必要が出たかを見る
-
-<p class="conclusion">TS6 では、何が増えたか以上に「どう設定し、どう移行するか」が重要になる</p>
+TypeScript 6.0 RC がリリースされた  
+正式版の公開はもう近い
 
 ---
 
 <!-- slide: 3 -->
+<!-- _class: lead -->
+# Are you ready for 6.0?
+
+移行準備は整っているか
+
+---
+
+<!-- slide: 4 -->
 <!-- _class: calm -->
 # TS7 を見据えた移行準備が始まった
 
@@ -38,7 +43,7 @@ size: 16:9
 
 ---
 
-<!-- slide: 4 -->
+<!-- slide: 5 -->
 <!-- _class: calm -->
 # TS6 の軸は「暗黙依存と旧互換を減らす」
 
@@ -50,7 +55,7 @@ size: 16:9
 
 ---
 
-<!-- slide: 5 -->
+<!-- slide: 6 -->
 # `strict` は推奨からデフォルトへ変わった
 
 ```json
@@ -68,7 +73,7 @@ size: 16:9
 
 ---
 
-<!-- slide: 6 -->
+<!-- slide: 7 -->
 # `types` は自動読込から明示指定へ変わった
 
 ```json
@@ -84,7 +89,7 @@ size: 16:9
 
 ---
 
-<!-- slide: 7 -->
+<!-- slide: 8 -->
 <!-- _class: calm -->
 # `types` は移行初手で固定する
 
@@ -103,7 +108,7 @@ types: 自動読み込み    types: ["node", "vitest"]
 
 ---
 
-<!-- slide: 8 -->
+<!-- slide: 9 -->
 <!-- _class: calm -->
 # `rootDir` も移行初手で固定する
 
@@ -122,7 +127,7 @@ TS6: rootDir = tsconfig の場所 → dist/src/index.js
 
 ---
 
-<!-- slide: 9 -->
+<!-- slide: 10 -->
 # `target` と `module` の既定は現在主流の実行環境に寄った
 
 - 現在主流の実行環境に合わせてデフォルトが見直された
@@ -136,7 +141,7 @@ TS6: rootDir = tsconfig の場所 → dist/src/index.js
 
 ---
 
-<!-- slide: 10 -->
+<!-- slide: 11 -->
 # `moduleResolution` は Node か Bundler かで先に決める
 
 - `classic` は削除
@@ -147,7 +152,7 @@ TS6: rootDir = tsconfig の場所 → dist/src/index.js
 
 ---
 
-<!-- slide: 11 -->
+<!-- slide: 12 -->
 # `baseUrl` は非推奨になり、import 解決は `paths` 明示へ寄せる
 
 ```json
@@ -164,7 +169,7 @@ TS6: rootDir = tsconfig の場所 → dist/src/index.js
 
 ---
 
-<!-- slide: 12 -->
+<!-- slide: 13 -->
 # `import assertions` は `with` へ移行する
 
 ```ts
@@ -181,7 +186,7 @@ import data from "./a.json" with { type: "json" }
 
 ---
 
-<!-- slide: 13 -->
+<!-- slide: 14 -->
 # `dom.iterable` / `dom.asynciterable` は足さなくてよくなった
 
 ```json
@@ -201,7 +206,7 @@ import data from "./a.json" with { type: "json" }
 
 ---
 
-<!-- slide: 14 -->
+<!-- slide: 15 -->
 # 副作用 import の解決ミスは既定で見つかりやすくなる
 
 `noUncheckedSideEffectImports: true` が既定になった
@@ -219,7 +224,7 @@ import "./setup";
 
 ---
 
-<!-- slide: 15 -->
+<!-- slide: 16 -->
 # `stableTypeOrdering` は比較時だけ一時的に使う
 
 ```json
@@ -237,7 +242,7 @@ import "./setup";
 
 ---
 
-<!-- slide: 16 -->
+<!-- slide: 17 -->
 # 問題は「同じ意味でも表示順が揺れる」こと
 
 ```ts
@@ -259,7 +264,7 @@ export function foo(condition: boolean) {
 
 ---
 
-<!-- slide: 17 -->
+<!-- slide: 18 -->
 # `stableTypeOrdering` を使うと比較ノイズを減らせる
 
 | モード | `foo` 戻り値型（`.d.ts`） | 備考 |
@@ -272,7 +277,7 @@ export function foo(condition: boolean) {
 
 ---
 
-<!-- slide: 18 -->
+<!-- slide: 19 -->
 # `stableTypeOrdering` は常用ではなく移行用
 
 - 常時ONではなく、移行検証で一時的に有効化する
@@ -284,7 +289,7 @@ export function foo(condition: boolean) {
 
 ---
 
-<!-- slide: 19 -->
+<!-- slide: 20 -->
 # 先に確認すべき変更と、後から見ればよい改善を分ける
 
 - まず確認すべきなのは、移行に影響する変更と非推奨項目
@@ -297,7 +302,7 @@ export function foo(condition: boolean) {
 
 ---
 
-<!-- slide: 20 -->
+<!-- slide: 21 -->
 <!-- _class: calm -->
 # 移行時はこの順で見ると切り分けしやすい
 
@@ -314,7 +319,7 @@ export function foo(condition: boolean) {
 
 ---
 
-<!-- slide: 21 -->
+<!-- slide: 22 -->
 # TS6 は前提を現在主流の開発実態に合わせて揃え直す
 
 - 暗黙依存を減らし、必要な設定を明示する
@@ -325,7 +330,7 @@ export function foo(condition: boolean) {
 
 ---
 
-<!-- slide: 22 -->
+<!-- slide: 23 -->
 # 参考資料
 
 - [TypeScript 6.0 Beta Announcement](https://devblogs.microsoft.com/typescript/announcing-typescript-6-0-beta/)
@@ -333,6 +338,6 @@ export function foo(condition: boolean) {
 
 ---
 
-<!-- slide: 23 -->
+<!-- slide: 24 -->
 <!-- _class: lead -->
 # Thank You
