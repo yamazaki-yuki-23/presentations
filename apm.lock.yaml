@@ -1,0 +1,10 @@
+lockfile_version: '1'
+generated_at: '2026-05-24T08:15:58.422611+00:00'
+dependencies: []
+local_deployed_files:
+- .agents/skills/slide-architect
+- .agents/skills/slide-editor
+- .agents/skills/slide-writer
+- .claude/skills/slide-architect
+- .claude/skills/slide-editor
+- .claude/skills/slide-writer

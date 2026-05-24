@@ -47,3 +47,13 @@ Bun ベース。`package.json` のスクリプトを直接叩く。
 - 共通テーマ・スタイルは `templates/` に集約する。個別スライドの `style:` フロントマターは最小限に。
 - `dist/` は `.gitignore` 済み。生成物をコミットしない。
 - `**/.private/` も `.gitignore` 済み。下書きや非公開メモは各発表配下の `.private/` に置けば除外される。
+
+## Agent skills (APM)
+
+エージェント向けスキルは [APM (Agent Package Manager)](https://github.com/microsoft/apm) で管理する。modern mode（`--legacy-skill-paths` を付けない）で運用しており、cross-client 共通パスに配備する。
+
+- **Source of truth**: `.apm/skills/<name>/SKILL.md`（`apm.yml` / `apm.lock.yaml` も git 管理）。
+- **Generated** (gitignore 済み、`apm install` で再生成):
+  - `.agents/skills/` — APM が定める cross-client 共通パス。Codex / Copilot など `apm.yml` の `targets:` に並ぶエージェントはここを参照する想定。
+  - `.claude/skills/` — Claude Code 専用パス。Claude Code は起動時にここを読む。
+- 配布先のターゲットは `apm.yml` の `targets:` で制御（現在は `claude`, `copilot`, `codex`）。スキルを追加・編集したら `apm install` を実行し、利用するエージェントを再起動する。
