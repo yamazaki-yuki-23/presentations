@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "preview": "marp --theme-set ./templates/theme.css -s",
+    "preview": "marp --theme-set ./templates/theme.css -s .",
     "build:pdf": "bun ./scripts/export-slides.ts pdf",
     "build:pdf:all": "bun ./scripts/export-slides.ts pdf --all",
     "build:html": "bun ./scripts/export-slides.ts html",
@@ -13,6 +13,6 @@
     "docs:dev": "npx mint dev"
   },
   "devDependencies": {
-    "@marp-team/marp-cli": "^4.2.3"
+    "@marp-team/marp-cli": "^4.4.0"
   }
 }
