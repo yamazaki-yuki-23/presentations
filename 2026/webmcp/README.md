@@ -8,13 +8,10 @@
 
 ## このフォルダの中身
 
-このリポジトリのほかの資料と違い、Marp ではなく Claude の Slides Artifact で作っている。
-そのため `slides.md` はなく、`build:*:all` と Pages のワークフローの対象にならない。
-ソースは Artifact 側にあり、ここには表示用の書き出しだけを置く。
+Claude の Slides Artifact で作った最初の資料。ソースは Artifact 側にあり、ここには表示用の書き出しだけを置く。
 
 - `slides.html`: Artifact のページから書き出した単体の HTML（⬇ → Web page (.html)）。ブラウザで開く。本文と話す原稿を含む
 
-生成物を Git に含めない決まりの例外として、この資料だけ `slides.html` を含めている。
 6 枚目の動画の埋め込みは書き出しでは黒い枠になる。動画は上の URL から開く。
 
 ## デザインの決まり

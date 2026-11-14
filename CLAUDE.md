@@ -1,59 +1,42 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+登壇・勉強会のスライドを置くリポジトリ。スライドは Claude の Slides Artifact で作る。
+Marp は 2026-11 でやめた（`2026/ts-6.0`、`2026/temporal-api`、`2026/nextjs-router-cache-bug` は
+Marp 時代の資料で、そのまま残している。ビルドの道具は消したので、要るときは
+`npx @marp-team/marp-cli` で単発に変換する）。
 
-## Repository purpose
+## 必須ルール
 
-Marp ベースの技術発表スライドを Markdown で管理するリポジトリ。生成物 (PDF / HTML) は Git に含めず、年度 × トピック単位でディレクトリを切る。スライドは公開前提なので、機密情報を入れない。
+- スライドを作る・直すときは `/slides` スキル（`.claude/skills/slides/SKILL.md`）の手順どおりに進める。
+  構成、デザインの決まり、文面の検査（yomiyasu）、画面での確認、置き方までそこにある
+- 雛形は `templates/`（`deck.json`、`deck.css`、`slides/*.html`）。deck.css は変えずに使い、
+  足りない部品だけ末尾に足す
+- 公開の前に `python3 scripts/check-deck.py <作業フォルダ>/project` をエラー 0 にする
+- Artifact に公開する前に、必ず `action: "read"` で相手の最新版を読む（オーナーがページ側で直す）
+- 公開前提なので、機密情報・社内限定の値を入れない。非公開のメモは各発表の `.private/` に置く
+- 新しい依存を足さない。スクリプトは Python 3 の標準ライブラリだけで書く
 
-## Commands
+## 置き場
 
-Bun ベース。`package.json` のスクリプトを直接叩く。
+```text
+<year>/<kebab-topic>/
+├─ README.md     # 題、日付、場、Artifact の URL、デモや動画の URL
+└─ slides.html   # Artifact のページから書き出した単体の HTML（⬇ → Web page (.html)）
+```
 
-- `bun install` — 依存インストール（`@marp-team/marp-cli` のみ）
-- `bun run preview` — Marp のローカルサーバーを起動して `slides.md` を監視
-- `bun run build:pdf <path/to/slides.md>` — 単一スライドを PDF 化
-- `bun run build:html <path/to/slides.md>` — 単一スライドを HTML 化
-- `bun run build:pdf:all` / `bun run build:html:all` — リポジトリ内のすべての `slides.md` を一括ビルド
-- `bun run docs:dev` — Mintlify (`docs/` + `docs.json`) のローカルプレビュー（`npx mint dev` 経由）
+ソース（deck.json・deck.css・slides）は Artifact 側にあるので置かない。
+`slides.html` は生成物だが、リポジトリで開ける唯一の形なので含める。
 
-テストや lint は未設定。markdownlint の設定 (`.markdownlint.jsonc`) のみ存在。
+## コマンド
 
-## Architecture
+```bash
+python3 scripts/check-deck.py <deck>/project   # デザインの決まりの検査（終了コード 1 でエラーあり）
+python3 scripts/check-deck.py --selftest       # 検査の自己テスト
+npx markdownlint-cli2 "**/*.md"                # README の体裁
+```
 
-3 つの独立した成果物を 1 リポジトリで管理している。これらは互いに依存しない。
+## 出力スタイル
 
-1. **Marp スライド** — `<year>/<topic>/slides.md`。各発表ディレクトリに `README.md` と `assets/` を同梱する。テーマは `templates/theme.css`（`@theme blueprint`、Gaia 拡張）、雛形は `templates/base.md`。
-2. **Mintlify ドキュメント** — `docs.json` + `docs/*.mdx`。リポジトリの使い方を説明する公開ドキュメントで、スライド本体とは別物。
-3. **エクスポートスクリプト** — `scripts/export-slides.ts`（Bun 実行）。`build:*` スクリプトの実体。
-
-### `scripts/export-slides.ts` の挙動
-
-- 入力パスはリポジトリ外を拒否し、`dist/` 配下に**元のディレクトリ構造を保ったまま**出力する（例: `2026/ts-6.0/slides.md` → `dist/2026/ts-6.0/slides.pdf`）。
-- `--all` モードは `find` で `slides.md` を再帰検索する（`node_modules` と `dist` を除外）。新しい発表を追加する際にファイル名を `slides.md` 以外にすると `:all` ビルドから漏れる点に注意。
-- Marp バイナリは `node_modules/.bin/marp` を直接呼び出し、テーマは常に `templates/theme.css` を `--theme-set` で渡す。
-
-### GitHub Actions (`.github/workflows/render-slides.yml`)
-
-`workflow_dispatch` のみ。手動で `slide_path` と `output` (`pdf` / `pages` / `both`) を指定する。
-
-- `pdf` ジョブ: PDF を artifact としてアップロード。
-- `pages` ジョブ: HTML を `.pages/` に配置して GitHub Pages にデプロイ。**毎回 1 資料ずつ上書き公開**する運用（過去資料は残らない）。トップに `slide_path` へのリダイレクト用 `index.html` を生成する。
-- 両ジョブとも CJK / IBM Plex フォントを apt で入れてからビルドする。日本語スライドの PDF レンダリングはこのフォント導入に依存する。
-
-## Conventions
-
-- 新しい発表は `<year>/<kebab-topic>/` を作り、`templates/base.md` をコピーして `slides.md` を作る。画像は同ディレクトリの `assets/` に置く（`build:*:all` と Pages ワークフローはこの構造を前提にしている）。
-- 共通テーマ・スタイルは `templates/` に集約する。個別スライドの `style:` フロントマターは最小限に。
-- `dist/` は `.gitignore` 済み。生成物をコミットしない。
-- `**/.private/` も `.gitignore` 済み。下書きや非公開メモは各発表配下の `.private/` に置けば除外される。
-
-## Agent skills (APM)
-
-エージェント向けスキルは [APM (Agent Package Manager)](https://github.com/microsoft/apm) で管理する。modern mode（`--legacy-skill-paths` を付けない）で運用しており、cross-client 共通パスに配備する。
-
-- **Source of truth**: `.apm/skills/<name>/SKILL.md`（`apm.yml` / `apm.lock.yaml` も git 管理）。
-- **Generated** (gitignore 済み、`apm install` で再生成):
-  - `.agents/skills/` — APM が定める cross-client 共通パス。Codex / Copilot など `apm.yml` の `targets:` に並ぶエージェントはここを参照する想定。
-  - `.claude/skills/` — Claude Code 専用パス。Claude Code は起動時にここを読む。
-- 配布先のターゲットは `apm.yml` の `targets:` で制御（現在は `claude`, `copilot`, `codex`）。スキルを追加・編集したら `apm install` を実行し、利用するエージェントを再起動する。
+読み手は ADHD。答えや次の行動から始め、複数ステップは番号を付け、1 ステップに行動 1 つ。
+2 分以内にできる次の行動を 1 つ示して終える。前置き・要約・締めの挨拶は入れない。
+破壊的操作の前には確認を取る。指示が曖昧なら短い質問を 1 つだけする。

@@ -1,155 +1,46 @@
-# 発表資料リポジトリ（Marp）
+# 発表資料リポジトリ
 
-このリポジトリは、Marp を使って Markdown で作成した技術発表スライドを管理するためのものです。
+登壇・勉強会のスライドを年度とトピック単位で置く。スライドは Claude の Slides Artifact で作り、
+ここには書き出した HTML と README を置く。
 
-このリポジトリの目的は次のとおりです。
-
-- スライドのソースを Markdown で管理する
-- 生成物（PDF / HTML）を Git に含めない
-- 年度とトピック単位で発表資料を整理する
-- 再現可能でバージョン管理しやすい構成にする
-
----
-
-## リポジトリ構成
+## 構成
 
 ```text
 .
-├─ .gitignore
 ├─ 2026/
-│   └─ ts-6.0/
-│       ├─ slides.md
-│       ├─ README.md
-│       └─ assets/
-│
+│   └─ webmcp/
+│       ├─ README.md      # 題、日付、場、Artifact の URL
+│       └─ slides.html    # Artifact から書き出した単体の HTML
 ├─ templates/
-│   ├─ base.md
-│   └─ theme.css
-│
-├─ assets/
-│   └─ images/
-│
-├─ dist/              # 生成物（git管理しない）
-├─ LICENSE
-├─ package.json
-├─ bun.lock
-├─ bun.lockb
-└─ README.md
+│   ├─ deck.json          # 枚の順番と章の雛形
+│   ├─ deck.css           # 共通のスタイル（白地、紺と橙の 2 色）
+│   └─ slides/*.html      # 枚の型（表紙、目次、章の区切り、列挙、2 列、表、流れ、時系列、図、動画、コード、おわり、出典）
+├─ scripts/check-deck.py  # デザインの決まりの検査
+└─ .claude/skills/slides/ # 作り方の手順
 ```
 
----
+## 新しい資料を作る
 
-## 方針
+1. Claude Code でこのリポジトリを開き、`/slides` に発表の日付・場・聴衆・持ち時間・伝えたいことを渡す
+2. Artifact 上で 1 枚ずつ確かめ、文面は yomiyasu、形は `scripts/check-deck.py` で検査する
+3. 仕上がったら Artifact のページの ⬇ → Web page (.html) で書き出し、`<year>/<topic>/slides.html` に置く
+4. `<year>/<topic>/README.md` に題、日付、場、Artifact の URL を書く
 
-- スライド本文は Markdown で作成する
-- 生成物は Git で追跡しない
-- 発表ごとに独立したディレクトリを持つ
-- 共通テーマやスタイルは `templates/` で管理する
-- 公開前提で管理し、機密情報や社内限定資料は含めない
+## 決まり
 
----
+- 大木尊紀氏「『見せる』登壇資料デザインの極意」（<https://youtu.be/rIueuWNfcCQ>）に従う。
+  題で結論を言う、箇条書きとカードを使わない、1 枚 5 行まで、白地・2 色（白地で 9:1 以上）・左揃え、
+  本文 48px、出典は最後の 1 枚にまとめる、各章の前に区切りの枚
+- 公開前提。機密情報を入れない。非公開のメモは各発表の `.private/` に置く（Git には入らない）
 
-## セットアップ
+## Marp 時代の資料
 
-依存関係をインストールします。
+`2026/ts-6.0`、`2026/temporal-api`、`2026/nextjs-router-cache-bug` は Marp で作った。
+ビルドの道具は消したので、変換が要るときは単発で実行する。
 
 ```bash
-bun install
+npx @marp-team/marp-cli 2026/ts-6.0/slides.md -o /tmp/ts-6.0.pdf
 ```
-
-VS Code を利用する場合は、拡張機能 `Marp for VS Code` の導入を推奨します。
-
----
-
-## スライドのプレビュー
-
-```bash
-bun run preview
-```
-
-ローカルのプレビューサーバーが起動し、`2026/ts-6.0/slides.md` を監視します。
-
-## Mintlify ドキュメントのプレビュー
-
-Mintlify 用の設定は `docs.json` と `docs/` 配下にあります。
-
-公式ドキュメントでは、`docs.json` のあるディレクトリで `mint dev`、または一時実行として `npx mint dev` が案内されています。
-
-```bash
-bun run docs:dev
-```
-
-初回実行時に `npx` 経由で Mintlify CLI を取得します。
-
----
-
-## スライドの生成
-
-### HTMLを生成
-
-```bash
-bun run build:html 2026/ts-6.0/slides.md
-```
-
-### PDFを生成
-
-```bash
-bun run build:pdf 2026/ts-6.0/slides.md
-```
-
-指定した `slides.md` は、`dist/` 配下に元のディレクトリ構造を保って出力されます。
-
-```text
-2026/ts-6.0/slides.md
--> dist/2026/ts-6.0/slides.pdf
-```
-
-### すべてのスライドをPDF生成
-
-```bash
-bun run build:pdf:all
-```
-
-### すべてのスライドをHTML生成
-
-```bash
-bun run build:html:all
-```
-
-生成物は `dist/` 配下に出力されます。
-
----
-
-## GitHub Actions で手動生成
-
-GitHub の `Actions` から `Render Slides` workflow を手動実行できます。
-
-- `slide_path`: 例 `2026/ts-6.0/slides.md`
-- `output`: `pdf` / `pages` / `both`
-
-### `pdf`
-
-指定した資料を PDF に変換し、artifact として保存します。
-
-### `pages`
-
-指定した資料だけを HTML として GitHub Pages に公開します。  
-毎回 1 資料ずつ上書き公開する運用です。
-
-### `both`
-
-PDF artifact と GitHub Pages 公開の両方を行います。
-
----
-
-## 新しい発表資料を追加する手順
-
-1. 対象年度の配下に新しいディレクトリを作成する
-2. `templates/base.md` をベースに `slides.md` を作成する
-3. 画像は各発表ディレクトリの `assets/` 配下に配置する
-4. 上記スクリプトでプレビューと生成を行う
-
----
 
 ## ライセンス
 
